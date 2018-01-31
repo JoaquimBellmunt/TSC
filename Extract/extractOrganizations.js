@@ -5,11 +5,9 @@ var dbpediaLookup = require('dbpedia-entity-lookup');
 //var parseXlsx = require('excel');
 var WikidataSearch = require('wikidata-search').WikidataSearch;
 var wikidataSearch = new WikidataSearch();
-var xlsx = require('node-xlsx');
-var Dataset = null
 
 
-var obj = JSON.parse(fs.readFileSync('../Datasets/organizations.json', 'utf8'), 1000);
+var obj = JSON.parse(fs.readFileSync('Extracted_Entities_organizations.json', 'utf8'), 1000);
 console.log(obj.length);
 var count = 0
 async.eachSeries(obj, function(item, cb){
@@ -69,14 +67,16 @@ async.eachSeries(obj, function(item, cb){
         else {
             count = count + 1;
             console.log('Done entity: ' + count.toString())
-            fs.writeFile('Extracted_Entities_organizations.json', JSON.stringify(obj), 'utf8', function(err){
+	    if(count % 10 == 0 ) { 
+		fs.writeFile('Extracted_Entities_organizations_mac.json', JSON.stringify(obj), 'utf8', function(err){
                     console.log(item.Name_mod+': Fetched and Saved');  
                     cb();
-            });
+		});
+	    } else { 
+		cb();
+	    }
         }
     });
-
-
 }, function(err){
     if(err) console.log(err)
     else {
